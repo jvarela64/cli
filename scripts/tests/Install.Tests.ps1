@@ -306,9 +306,10 @@ Invoke-TestCase "PATH is updated only when the install dir is not already presen
             Assert-True ($updatedPath -like "*$installDir*") "install dir should now be present in PATH"
 
             # Running again with the dir already present should not re-add it.
-            $output2 = (Install-DeepSourceCli -BaseUrl $fixture.Server.BaseUrl -BinaryName $fixture.BinaryName `
-                -InstallDir $installDir -Architew6432 $null -Architecture "ARM64" -PathScope Process 6>&1 | Out-String)
-            Assert-Match $output2 "is already in PATH" "should report PATH already contains install dir"
+            Install-DeepSourceCli -BaseUrl $fixture.Server.BaseUrl -BinaryName $fixture.BinaryName `
+                -InstallDir $installDir -Architew6432 $null -Architecture "ARM64" -PathScope Process 6>$null | Out-Null
+            $pathAfterSecondInstall = [Environment]::GetEnvironmentVariable("Path", "Process")
+            Assert-Equal $updatedPath $pathAfterSecondInstall "second install should not duplicate the PATH entry"
         } finally {
             [Environment]::SetEnvironmentVariable("Path", $originalPath, "Process")
         }
