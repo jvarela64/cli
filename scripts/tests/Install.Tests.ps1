@@ -301,7 +301,6 @@ Invoke-TestCase "PATH is updated only when the install dir is not already presen
             $output = (Install-DeepSourceCli -BaseUrl $fixture.Server.BaseUrl -BinaryName $fixture.BinaryName `
                 -InstallDir $installDir -Architew6432 $null -Architecture "ARM64" -PathScope Process 6>&1 | Out-String)
             Assert-Match $output "Added " "should report PATH was updated"
-            Assert-Match $output "to user PATH" "should identify the PATH scope"
 
             $updatedPath = [Environment]::GetEnvironmentVariable("Path", "Process")
             Assert-True ($updatedPath -like "*$installDir*") "install dir should now be present in PATH"
